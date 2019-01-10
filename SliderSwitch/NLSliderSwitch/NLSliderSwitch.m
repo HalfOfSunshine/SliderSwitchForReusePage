@@ -28,6 +28,7 @@
 @property(nonatomic,assign) CGRect lastSliderFrame;
 /** 点击滑动时scrollViewDidScroll回调不改变slider.frame */
 @property(nonatomic) BOOL sliderFlexibleWidthEnable;
+@property(nonatomic) BOOL animationStop;
 
 @end
 @implementation NLSliderSwitch
@@ -51,6 +52,7 @@
 		self.selectedIndex = 0;
 		self.selectedFontBlod = YES;
 		self.sliderFlexibleWidthEnable = YES;
+		self.animationStop = YES;
 		self.buttonSize = CGSizeMake(size.width*SelectedScale, size.height*SelectedScale);
 		self.normalTitleColor = [UIColor grayColor];
 		self.selectedTitleColor = [UIColor blackColor];
@@ -66,21 +68,22 @@
 	return self;
 }
 
-
+#pragma mark CAAnimationDelegate
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag{
+	self.animationStop = YES;
+}
 
 #pragma mark SliderAction And Animated
 -(void)clickEvent:(UIButton *)sender
 {
+	self.animationStop = NO;
 	self.sliderFlexibleWidthEnable = NO;
 	self.lastContentOffset = self.containerScroll.contentOffset.x;//判断左右滑动时
 	self.lastSliderFrame = self.sliderLayer.frame;
 	[self slideToIndex:sender.tag-9000 animated:YES];
 }
 
-//- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag{
-//	if (self.delegate && [self.delegate respondsToSelector:@selector(kmSwitch:didSelectedIndex:)]) {
-//		[self.delegate kmSwitch:self didSelectedIndex:index];
-//}
+
 -(void)slideToIndex:(NSInteger)idx{
 	[self slideToIndex:idx animated:YES];
 }
@@ -115,7 +118,6 @@
 	}
 	if (animated){
 		//滑动
-
 		self.sliderLayer.frame = CGRectMake(button.frame.origin.x+button.frame.size.width/2-5, self.lastSliderFrame.origin.y, self.sliderSize.width, self.sliderSize.height);
 		//	长短
 		CABasicAnimation *sliderAnimation = [CABasicAnimation animation];
@@ -129,7 +131,7 @@
 			sliderAnimation.speed = 3;
 		}
 		sliderAnimation.autoreverses = YES;
-
+		sliderAnimation.delegate = self;
 		[self.sliderLayer addAnimation:sliderAnimation forKey:@"sliderAnimation"];
 		// 	放大
 		CABasicAnimation *selectedAnimation = [CABasicAnimation animation];
@@ -173,7 +175,11 @@
 	}
 	if (scrollView == self.containerScroll) {
 		//全局变量记录滑动前的contentOffset
-		self.sliderFlexibleWidthEnable = YES;
+		NSLog(@"开始滑动屏幕");
+		if (self.animationStop) {
+			self.sliderFlexibleWidthEnable = YES;
+			NSLog(@"伸缩可用");
+		}
 		self.lastContentOffset = scrollView.contentOffset.x;//判断左右滑动时
 		self.lastSliderFrame = self.sliderLayer.frame;
 	}
@@ -181,9 +187,11 @@
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
 	if (scrollView == self.containerScroll&&self.sliderFlexibleWidthEnable) {
-		CGFloat sliderScan = self.contentSize.width/self.dataArray.count/KScreen.width;
+		NSLog(@"滑动中");
+		CGFloat sliderScan = (self.contentSize.width/self.dataArray.count)/KScreen.width;
 		CGFloat scrollDistance = scrollView.contentOffset.x - self.lastContentOffset;
 		CGFloat sliderFlexibleWidth = scrollDistance*sliderScan;
+		NSLog(@"flexibleWidth:%f",sliderFlexibleWidth);
 		if (sliderFlexibleWidth>=0) {//👉
 			self.sliderLayer.frame = CGRectMake(self.lastSliderFrame.origin.x, self.lastSliderFrame.origin.y, self.lastSliderFrame.size.width+sliderFlexibleWidth, self.lastSliderFrame.size.height);
 		}else if (scrollDistance<0){//👈
@@ -199,8 +207,15 @@
 	if (scrollView == self.containerScroll) {
 		float xx = scrollView.contentOffset.x;
 		int rate = round(xx/KScreen.width);
+		NSLog(@"滑动结束");
 		if (rate != self.selectedIndex) {
 			[self slideToIndex:rate];
+		}else{
+			if (self.sliderLayer.frame.size.width != self.sliderSize.width) {
+				//滑动
+				UIButton *button=(UIButton *)[self viewWithTag:self.selectedIndex+9000];
+				self.sliderLayer.frame = CGRectMake(button.frame.origin.x+button.frame.size.width/2-5, self.lastSliderFrame.origin.y, self.sliderSize.width, self.sliderSize.height);
+			}
 		}
 	}
 	

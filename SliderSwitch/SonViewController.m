@@ -22,7 +22,7 @@
 }
 
 -(void)viewDidScrollToVisiableArea{
-	NSLog(@"当前滑动到了‘%@’页面",self.title);
+	NSLog(@"当前滑动到了‘%@’页面",self.titleLab.text);
 }
 -(void)setTitleLabStr:(NSString *)titleLabStr{
 	_titleLabStr = titleLabStr;
