@@ -59,6 +59,7 @@
 		_sliderLayer = [CALayer layer];
 
 		_sliderLayer.frame = CGRectMake(self.buttonSize.width*self.selectedIndex*UnSelectedScale-(self.buttonSize.width-self.buttonSize.width*UnSelectedScale)/2+self.buttonSize.width/2-4, frame.size.height-6, 10, 4);
+		self.lastSliderFrame = _sliderLayer.frame;
 		self.sliderSize = _sliderLayer.frame.size;
 		_sliderLayer.masksToBounds = YES;
 		_sliderLayer.backgroundColor = [UIColor blueColor].CGColor;
@@ -76,10 +77,9 @@
 #pragma mark SliderAction And Animated
 -(void)clickEvent:(UIButton *)sender
 {
+	[self anchorScrollViewPoint:self.containerScroll];
 	self.animationStop = NO;
 	self.sliderFlexibleWidthEnable = NO;
-	self.lastContentOffset = self.containerScroll.contentOffset.x;//判断左右滑动时
-	self.lastSliderFrame = self.sliderLayer.frame;
 	[self slideToIndex:sender.tag-9000 animated:YES];
 }
 
@@ -90,10 +90,6 @@
 
 -(void)slideToIndex:(NSInteger)idx animated:(BOOL)animated;
 {
-	//全局变量记录滑动前的contentOffset
-	self.lastContentOffset = self.containerScroll.contentOffset.x;//判断左右滑动时
-	self.lastSliderFrame = self.sliderLayer.frame;
-	
 	UIButton *button=(UIButton *)[self viewWithTag:idx+9000];
 	
 	[button setTitleColor:self.selectedTitleColor forState:UIControlStateNormal];
@@ -116,6 +112,7 @@
 	if (self.delegate && [self.delegate respondsToSelector:@selector(sliderSwitch:didSelectedIndex:)]) {
 		[self.delegate sliderSwitch:self didSelectedIndex:index];
 	}
+	[self scrollRectToVisible:CGRectMake(index*self.buttonSize.width*UnSelectedScale+self.buttonSize.width/2-[[UIScreen mainScreen] bounds].size.width/2,0, self.frame.size.width, self.frame.size.height) animated:YES];
 	if (animated){
 		//滑动
 		self.sliderLayer.frame = CGRectMake(button.frame.origin.x+button.frame.size.width/2-5, self.lastSliderFrame.origin.y, self.sliderSize.width, self.sliderSize.height);
@@ -175,50 +172,73 @@
 	}
 	if (scrollView == self.containerScroll) {
 		//全局变量记录滑动前的contentOffset
-		NSLog(@"开始滑动屏幕");
-		if (self.animationStop) {
-			self.sliderFlexibleWidthEnable = YES;
-			NSLog(@"伸缩可用");
-		}
-		self.lastContentOffset = scrollView.contentOffset.x;//判断左右滑动时
-		self.lastSliderFrame = self.sliderLayer.frame;
+		[self anchorScrollViewPoint:scrollView];
 	}
 }
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView{
 	if (scrollView == self.containerScroll&&self.sliderFlexibleWidthEnable) {
-		NSLog(@"滑动中");
+		[CATransaction begin];
+		[CATransaction setDisableActions:YES];
 		CGFloat sliderScan = (self.contentSize.width/self.dataArray.count)/KScreen.width;
 		CGFloat scrollDistance = scrollView.contentOffset.x - self.lastContentOffset;
-		CGFloat sliderFlexibleWidth = scrollDistance*sliderScan;
-		NSLog(@"flexibleWidth:%f",sliderFlexibleWidth);
-		if (sliderFlexibleWidth>=0) {//👉
-			self.sliderLayer.frame = CGRectMake(self.lastSliderFrame.origin.x, self.lastSliderFrame.origin.y, self.lastSliderFrame.size.width+sliderFlexibleWidth, self.lastSliderFrame.size.height);
+		if (scrollDistance>=0) {//👉
+			if (scrollDistance <= KScreen.width/2){
+				CGFloat sliderFlexibleWidth = scrollDistance*sliderScan*2;
+				self.sliderLayer.frame = CGRectMake(self.lastSliderFrame.origin.x, self.lastSliderFrame.origin.y, self.lastSliderFrame.size.width+sliderFlexibleWidth, self.lastSliderFrame.size.height);
+			}else if (scrollDistance > KScreen.width/2&&scrollDistance < KScreen.width) {
+				CGFloat sliderFlexibleWidth = (KScreen.width-scrollDistance)*sliderScan*2;
+				CGFloat xMoveDistance = (KScreen.width/2-scrollDistance)*sliderScan*2;
+
+				self.sliderLayer.frame = CGRectMake(self.lastSliderFrame.origin.x-xMoveDistance, self.lastSliderFrame.origin.y, self.lastSliderFrame.size.width+sliderFlexibleWidth, self.lastSliderFrame.size.height);
+			}else if (scrollDistance >= KScreen.width) {
+				[self anchorScrollViewPoint:scrollView];
+				[self scrollRectToVisible:CGRectMake((round(scrollView.contentOffset.x/KScreen.width))*self.buttonSize.width*UnSelectedScale+self.buttonSize.width/2-[[UIScreen mainScreen] bounds].size.width/2,0, self.frame.size.width, self.frame.size.height) animated:YES];
+			}
 		}else if (scrollDistance<0){//👈
-			self.sliderLayer.frame = CGRectMake(self.lastSliderFrame.origin.x+sliderFlexibleWidth, self.lastSliderFrame.origin.y, self.lastSliderFrame.size.width-sliderFlexibleWidth, self.lastSliderFrame.size.height);
+			if (scrollDistance >= -KScreen.width/2){
+				CGFloat sliderFlexibleWidth = scrollDistance*sliderScan*2;
+				self.sliderLayer.frame = CGRectMake(self.lastSliderFrame.origin.x+sliderFlexibleWidth, self.lastSliderFrame.origin.y, self.lastSliderFrame.size.width-sliderFlexibleWidth, self.lastSliderFrame.size.height);
+			}else if (scrollDistance < -KScreen.width/2 && scrollDistance > -KScreen.width) {
+				CGFloat sliderFlexibleWidth = (KScreen.width+scrollDistance)*sliderScan*2;
+				CGFloat xMoveDistance = KScreen.width*sliderScan;
+				self.sliderLayer.frame = CGRectMake(self.lastSliderFrame.origin.x-xMoveDistance, self.lastSliderFrame.origin.y, self.lastSliderFrame.size.width+sliderFlexibleWidth, self.lastSliderFrame.size.height);
+			}else if (scrollDistance <= -KScreen.width) {
+				[self anchorScrollViewPoint:scrollView];
+				[self scrollRectToVisible:CGRectMake((round(scrollView.contentOffset.x/KScreen.width))*self.buttonSize.width*UnSelectedScale+self.buttonSize.width/2-[[UIScreen mainScreen] bounds].size.width/2,0, self.frame.size.width, self.frame.size.height) animated:YES];
+
+			}
 		}
 	}
+	[CATransaction commit];
 	if ([_myDelegate respondsToSelector:@selector(scrollViewDidScroll:)]) {
 		[_myDelegate scrollViewDidScroll:self];
 	}
 }
 
+-(void)anchorScrollViewPoint:(UIScrollView *)scrollView{
+	if (self.animationStop) {
+		self.sliderFlexibleWidthEnable = YES;
+	}
+	self.lastContentOffset = scrollView.contentOffset.x;//判断左右滑动时
+	int rate = round(scrollView.contentOffset.x/KScreen.width);
+	UIButton *button=(UIButton *)[self viewWithTag:rate+9000];
+
+	self.lastSliderFrame = CGRectMake(button.frame.origin.x+button.frame.size.width/2-5, self.lastSliderFrame.origin.y, self.sliderSize.width, self.sliderSize.height);;
+}
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
 	if (scrollView == self.containerScroll) {
 		float xx = scrollView.contentOffset.x;
 		int rate = round(xx/KScreen.width);
-		NSLog(@"滑动结束");
 		if (rate != self.selectedIndex) {
 			[self slideToIndex:rate];
 		}else{
 			if (self.sliderLayer.frame.size.width != self.sliderSize.width) {
-				//滑动
 				UIButton *button=(UIButton *)[self viewWithTag:self.selectedIndex+9000];
 				self.sliderLayer.frame = CGRectMake(button.frame.origin.x+button.frame.size.width/2-5, self.lastSliderFrame.origin.y, self.sliderSize.width, self.sliderSize.height);
 			}
 		}
 	}
-	
 	if ([_myDelegate respondsToSelector:@selector(scrollViewDidEndDecelerating:)]) {
 		[_myDelegate scrollViewDidEndDecelerating:self];
 	}
@@ -272,7 +292,6 @@
 -(void)setSelectedIndex:(NSInteger)selectedIndex{
 	if (_selectedIndex!=selectedIndex) {
 		_selectedIndex = selectedIndex;
-		[self scrollRectToVisible:CGRectMake((selectedIndex)*self.buttonSize.width*UnSelectedScale+self.buttonSize.width/2-[[UIScreen mainScreen] bounds].size.width/2,0, self.frame.size.width, self.frame.size.height) animated:YES];
 	}
 	if ([self.dataArray[selectedIndex].VC respondsToSelector:@selector(viewDidScrollToVisiableArea)]) {
 		[self.dataArray[selectedIndex].VC viewDidScrollToVisiableArea];
