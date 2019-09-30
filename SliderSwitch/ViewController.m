@@ -8,12 +8,12 @@
 
 #import "ViewController.h"
 #import "SonViewController.h"
-#import "NLSliderSwitch.h"
+#import "SliderSwitch.h"
 #import "UIColor+SWCategory.h"
 #import "SWModel.h"
 #define KScreen [UIScreen mainScreen].bounds.size
 #define TopBarHeight (([UIScreen mainScreen].bounds.size.height >= 812.0) ? 88.f : 64.f)
-@interface ViewController ()<NLSliderSwitchDelegate,UIScrollViewDelegate>
+@interface ViewController ()<SliderSwitchDelegate,UIScrollViewDelegate>
 //数据源
 @property (nonatomic, strong) NSMutableArray <SWModel *>* listArray;
 
@@ -21,7 +21,7 @@
 @property (nonatomic, strong) UIScrollView * backScrollV;
 
 //页签控件
-@property (nonatomic, strong) NLSliderSwitch *sliderSwitch;
+@property (nonatomic, strong) SliderSwitch *sliderSwitch;
 @end
 
 @implementation ViewController
@@ -42,7 +42,7 @@
 {
 	self.backScrollV.backgroundColor = [UIColor greenColor];
 	
-	self.sliderSwitch = [[NLSliderSwitch alloc]initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 40) buttonSize:CGSizeMake(53, 30)];
+	self.sliderSwitch = [[SliderSwitch alloc]initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 40) buttonSize:CGSizeMake(53, 30)];
 	self.listArray = [[NSMutableArray alloc]init];
 	for (NSInteger i=0; i<self.titleCount; i++) {
 		SWModel *model = [[SWModel alloc]init];
@@ -68,12 +68,10 @@
 //	[self.sliderSwitch slideToIndex:5];
 //	[self.backScrollV scrollRectToVisible:CGRectMake(5*KScreen.width,0, KScreen.width, 1) animated:YES];
 	self.sliderSwitch.containerScroll = self.backScrollV;
-
-	
 }
 
 
--(UIViewController <NLSliderSwitchProtocol>*)sliderSwitch:(NLSliderSwitch *)sliderSwitch setSubViewControllerInIndex:(NSInteger)index{
+-(UIViewController <SliderSwitchProtocol>*)sliderSwitch:(SliderSwitch *)sliderSwitch setSubViewControllerInIndex:(NSInteger)index{
 	SonViewController *sonViewController = [[SonViewController alloc]init];
 	sonViewController.delegateVC = self;
 	[self addChildViewController:sonViewController];
@@ -83,7 +81,7 @@
 	return sonViewController;
 }
 
--(void)sliderSwitch:(NLSliderSwitch *)sliderSwitch didSelectedIndex:(NSInteger)selectedIndex{
+-(void)sliderSwitch:(SliderSwitch *)sliderSwitch didSelectedIndex:(NSInteger)selectedIndex{
 	
 }
 

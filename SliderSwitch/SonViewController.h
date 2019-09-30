@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
-#import "NLSliderSwitchProtocol.h"
+#import "SliderSwitchProtocol.h"
 NS_ASSUME_NONNULL_BEGIN
 
-@interface SonViewController : UIViewController <NLSliderSwitchProtocol>
+@interface SonViewController : UIViewController <SliderSwitchProtocol>
 @property(nonatomic, weak) ViewController *delegateVC;
 @property(nonatomic, strong) UILabel *titleLab;
 @property(nonatomic, strong) NSString *titleLabStr;

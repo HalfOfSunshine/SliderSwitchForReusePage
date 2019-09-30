@@ -17,7 +17,7 @@
 		7D80791E2175A1DA00E392F7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D80791D2175A1DA00E392F7 /* main.m */; };
 		7D8079282175A1DA00E392F7 /* SliderSwitchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D8079272175A1DA00E392F7 /* SliderSwitchTests.m */; };
 		7D8079332175A1DA00E392F7 /* SliderSwitchUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D8079322175A1DA00E392F7 /* SliderSwitchUITests.m */; };
-		7D8079422175A25E00E392F7 /* NLSliderSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D8079402175A25E00E392F7 /* NLSliderSwitch.m */; };
+		7D8079422175A25E00E392F7 /* SliderSwitch.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D8079402175A25E00E392F7 /* SliderSwitch.m */; };
 		7D8079452175A51800E392F7 /* SonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D8079442175A51800E392F7 /* SonViewController.m */; };
 /* End PBXBuildFile section */
 
@@ -59,11 +59,11 @@
 		7D80792E2175A1DA00E392F7 /* SliderSwitchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SliderSwitchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D8079322175A1DA00E392F7 /* SliderSwitchUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SliderSwitchUITests.m; sourceTree = "<group>"; };
 		7D8079342175A1DA00E392F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7D8079402175A25E00E392F7 /* NLSliderSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NLSliderSwitch.m; sourceTree = "<group>"; };
-		7D8079412175A25E00E392F7 /* NLSliderSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NLSliderSwitch.h; sourceTree = "<group>"; };
+		7D8079402175A25E00E392F7 /* SliderSwitch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SliderSwitch.m; sourceTree = "<group>"; };
+		7D8079412175A25E00E392F7 /* SliderSwitch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderSwitch.h; sourceTree = "<group>"; };
 		7D8079432175A51800E392F7 /* SonViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SonViewController.h; sourceTree = "<group>"; };
 		7D8079442175A51800E392F7 /* SonViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SonViewController.m; sourceTree = "<group>"; };
-		7D8079462175AD8D00E392F7 /* NLSliderSwitchProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NLSliderSwitchProtocol.h; sourceTree = "<group>"; };
+		7D8079462175AD8D00E392F7 /* SliderSwitchProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SliderSwitchProtocol.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -171,9 +171,9 @@
 		7D8079472175CA1600E392F7 /* NLSliderSwitch */ = {
 			isa = PBXGroup;
 			children = (
-				7D8079412175A25E00E392F7 /* NLSliderSwitch.h */,
-				7D8079402175A25E00E392F7 /* NLSliderSwitch.m */,
-				7D8079462175AD8D00E392F7 /* NLSliderSwitchProtocol.h */,
+				7D8079412175A25E00E392F7 /* SliderSwitch.h */,
+				7D8079402175A25E00E392F7 /* SliderSwitch.m */,
+				7D8079462175AD8D00E392F7 /* SliderSwitchProtocol.h */,
 			);
 			path = NLSliderSwitch;
 			sourceTree = "<group>";
@@ -311,7 +311,7 @@
 				7D8079132175A1D900E392F7 /* ViewController.m in Sources */,
 				7D59734E21E5C9100018095A /* SWModel.m in Sources */,
 				7D80791E2175A1DA00E392F7 /* main.m in Sources */,
-				7D8079422175A25E00E392F7 /* NLSliderSwitch.m in Sources */,
+				7D8079422175A25E00E392F7 /* SliderSwitch.m in Sources */,
 				7D8079452175A51800E392F7 /* SonViewController.m in Sources */,
 				7D8079102175A1D900E392F7 /* AppDelegate.m in Sources */,
 				7D59734A21E4B9410018095A /* UIColor+SWCategory.m in Sources */,

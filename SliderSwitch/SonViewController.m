@@ -21,21 +21,42 @@
 	[self.view addSubview:self.titleLab];
 }
 
--(void)viewDidScrollToVisiableArea{
-	NSLog(@"当前滑动到了‘%@’页面",self.titleLab.text);
+
+- (void)sliderSwitchDidEndDecelerating {
+    NSLog(@"开始拖动");
 }
+
+
+- (void)sliderSwitchRequestRefresh {
+    NSLog(@"请求刷新");
+}
+
+
+- (void)sliderSwitchWillBeginDragging {
+    NSLog(@"结束拖动");
+}
+
+
+
 -(void)setTitleLabStr:(NSString *)titleLabStr{
-	_titleLabStr = titleLabStr;
-	self.titleLab.text = self.titleLabStr;
+    _titleLabStr = titleLabStr;
+    self.titleLab.text = self.titleLabStr;
 }
 /*
-#pragma mark - Navigation
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+
+
+
+@synthesize isVisiableVC;
+
+@synthesize showAsPageCard;
 
 @end
